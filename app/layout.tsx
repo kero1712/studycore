@@ -1,5 +1,6 @@
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const metadata = { title: "StudyCore", description: "منصة بسيطة ومنظمة تجمع المحتوى الدراسي في مكان واحد" };
 
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Header />
         <main id="app">{children}</main>
+        <Footer />
       </body>
     </html>
   );
