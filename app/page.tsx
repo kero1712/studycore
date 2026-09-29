@@ -1,10 +1,11 @@
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { ART_INNER } from "@/lib/svg";
-import { terms, subjects } from "@/data/catalog";
+import { getTerms } from "@/lib/data";
 import { ar } from "@/lib/ar";
 
-export default function Home() {
+export default async function Home() {
+  const terms = await getTerms();
   return (
     <>
       <section className="hero">
@@ -21,7 +22,7 @@ export default function Home() {
           <Link key={t.id} href={`/t/${t.id}`} className={`term t${t.id}`}>
             <span className="n">{ar(t.id)}</span>
             <span className="go"><Icon name="go" /></span>
-            <small>{ar(subjects.filter((s) => s.termId === t.id).length)} مواد</small>
+            <small>{ar(t.subjects.length)} مواد</small>
             <h3>{t.name}</h3>
           </Link>
         ))}

@@ -1,48 +1,55 @@
-// ملف البيانات الوحيد للمنصة: عدّل أو أضف هنا فقط، والواجهة تتحدث تلقائيًا.
-// icon = اسم أيقونة من components/Icon.tsx
+// مصدر البيانات الحالي (ملف ثابت). الواجهة لا تقرأ من هنا مباشرة بل عبر lib/data.ts،
+// فيمكن لاحقًا استبدال هذا الملف بـ Supabase دون تغيير أي صفحة.
+import type { Section, Subject, Term } from "./types";
 
-export const terms = [
-  { id: 1, name: "الترم الأول" },
-  { id: 2, name: "الترم الثاني" },
+// الأقسام السبعة، ويحصل كل Subject على نسخة منها بمحتوى فارغ.
+const SECTION_TEMPLATES: Omit<Section, "contentItems">[] = [
+  { id: "book", name: "كتاب الجامعة", icon: "book", tone: "g1", order: 1 },
+  { id: "lec", name: "المحاضرات", icon: "lec", tone: "g1", order: 2 },
+  { id: "sec", name: "السكاشن", icon: "sec", tone: "g1", order: 3 },
+  { id: "sum", name: "الملخصات", icon: "sum", tone: "g1", order: 4 },
+  { id: "vid", name: "الفيديوهات", icon: "vid", tone: "g2", order: 5 },
+  { id: "q", name: "الأسئلة", icon: "q", tone: "g3", order: 6 },
+  { id: "ex", name: "الامتحانات", icon: "ex", tone: "g3", order: 7 },
 ];
 
-// لإضافة مادة: أضف سطرًا جديدًا (id فريد + termId + الاسم + الأيقونة).
-// المادة السابعة في الترم الثاني لم تُحدَّد بعد، أضفها هنا عند معرفة اسمها.
-export const subjects = [
-  { id: 1, termId: 1, name: "English", icon: "lang" },
-  { id: 2, termId: 1, name: "E-commerce", icon: "cart" },
-  { id: 3, termId: 1, name: "CS", icon: "code" },
-  { id: 4, termId: 1, name: "Physics", icon: "atom" },
-  { id: 5, termId: 1, name: "Math 1", icon: "sigma" },
-  { id: 6, termId: 1, name: "Math 0", icon: "calc" },
-  { id: 7, termId: 1, name: "Ethics", icon: "scale" },
-  { id: 8, termId: 2, name: "Electronics", icon: "bolt" },
-  { id: 9, termId: 2, name: "Introduction to Artificial Intelligence", icon: "spark" },
-  { id: 10, termId: 2, name: "Discrete Mathematics", icon: "sigma" },
-  { id: 11, termId: 2, name: "Digital Logic Design", icon: "logic" },
-  { id: 12, termId: 2, name: "Introduction to Cyber Security", icon: "shield" },
-  { id: 13, termId: 2, name: "Computer Programming & Problem Solving", icon: "code" },
+const subject = (id: number, name: string, icon: string, order: number): Subject => ({
+  id,
+  name,
+  icon,
+  order,
+  sections: SECTION_TEMPLATES.map((s) => ({ ...s, contentItems: [] })),
+});
+
+// لإضافة محتوى: ضع عنصرًا داخل contentItems للقسم المطلوب،
+// مثال: { id: "c1", name: "المحاضرة 1", type: "pdf", url: "...", order: 1 }
+// لإضافة مادة: أضف subject(...) جديدًا. المادة السابعة في الترم الثاني لم تُحدَّد بعد.
+export const catalog: Term[] = [
+  {
+    id: 1,
+    name: "الترم الأول",
+    order: 1,
+    subjects: [
+      subject(1, "English", "lang", 1),
+      subject(2, "E-commerce", "cart", 2),
+      subject(3, "CS", "code", 3),
+      subject(4, "Physics", "atom", 4),
+      subject(5, "Math 1", "sigma", 5),
+      subject(6, "Math 0", "calc", 6),
+      subject(7, "Ethics", "scale", 7),
+    ],
+  },
+  {
+    id: 2,
+    name: "الترم الثاني",
+    order: 2,
+    subjects: [
+      subject(8, "Electronics", "bolt", 1),
+      subject(9, "Introduction to Artificial Intelligence", "spark", 2),
+      subject(10, "Discrete Mathematics", "sigma", 3),
+      subject(11, "Digital Logic Design", "logic", 4),
+      subject(12, "Introduction to Cyber Security", "shield", 5),
+      subject(13, "Computer Programming & Problem Solving", "code", 6),
+    ],
+  },
 ];
-
-// group: g1 = مواد الدراسة (أزرق)، g2 = وسائط (برتقالي)، g3 = تقييم (كحلي)
-export const sections = [
-  { slug: "book", name: "كتاب الجامعة", icon: "book", group: "g1" },
-  { slug: "lec", name: "المحاضرات", icon: "lec", group: "g1" },
-  { slug: "sec", name: "السكاشن", icon: "sec", group: "g1" },
-  { slug: "sum", name: "الملخصات", icon: "sum", group: "g1" },
-  { slug: "vid", name: "الفيديوهات", icon: "vid", group: "g2" },
-  { slug: "q", name: "الأسئلة", icon: "q", group: "g3" },
-  { slug: "ex", name: "الامتحانات", icon: "ex", group: "g3" },
-];
-
-export type ContentItem = {
-  id: string;
-  subjectId: number;
-  section: string; // slug من sections
-  kind: "file" | "video";
-  title: string;
-  url: string;
-};
-
-// المحتوى فارغ حاليًا. يُملأ لاحقًا من الـAdmin.
-export const content: ContentItem[] = [];
