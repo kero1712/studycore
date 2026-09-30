@@ -1,4 +1,4 @@
-# StudyCore — Checkpoint 1 — Data Structure (Supabase + Admin)
+# StudyCore — Checkpoint 2 — Supabase + Admin (NOT YET BUILT: npm install was blocked in the authoring environment)
 تشغيل: `npm install` ثم `npm run dev`. بدون مفاتيح Supabase يعمل الموقع بالبيانات الثابتة في `data/catalog.ts`.
 
 ## ربط Supabase (يدويًا)

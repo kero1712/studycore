@@ -49,7 +49,7 @@ create index if not exists subjects_term_order_idx on public.subjects (term_id, 
 create index if not exists sections_subject_order_idx on public.sections (subject_id, sort_order);
 create index if not exists content_section_order_idx on public.content_items (section_id, sort_order);
 
-create or replace function public.set_updated_at() returns trigger language plpgsql as $$
+create or replace function public.set_updated_at() returns trigger language plpgsql set search_path = public as $$
 begin new.updated_at = now(); return new; end $$;
 
 do $$ declare t text; begin
@@ -77,15 +77,24 @@ alter table public.sections enable row level security;
 alter table public.content_items enable row level security;
 alter table public.admin_users enable row level security;
 
--- القراءة العامة (الطلاب بدون تسجيل): المنشور فقط. الأدمن يرى كل شيء.
+-- القراءة العامة (الطلاب بدون تسجيل): المنشور فقط، ولا يظهر شيء داخل مادة مخفية. الأدمن يرى كل شيء.
 drop policy if exists "read terms" on public.terms;
 create policy "read terms" on public.terms for select using (true);
 drop policy if exists "read subjects" on public.subjects;
 create policy "read subjects" on public.subjects for select using (is_published or public.is_admin());
 drop policy if exists "read sections" on public.sections;
-create policy "read sections" on public.sections for select using (true);
+create policy "read sections" on public.sections for select using (
+  public.is_admin() or exists (select 1 from public.subjects j where j.id = subject_id and j.is_published)
+);
 drop policy if exists "read content" on public.content_items;
-create policy "read content" on public.content_items for select using (is_published or public.is_admin());
+create policy "read content" on public.content_items for select using (
+  public.is_admin() or (
+    is_published and exists (
+      select 1 from public.sections x join public.subjects j on j.id = x.subject_id
+      where x.id = section_id and j.is_published
+    )
+  )
+);
 
 -- الكتابة: الأدمن فقط
 do $$ declare t text; begin
