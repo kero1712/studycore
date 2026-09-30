@@ -11,3 +11,10 @@
 - `data/` أنواع + كتالوج ثابت (احتياطي) · `lib/data.ts` طبقة القراءة · `lib/data-map.ts` تحويل DB → واجهة
 - `app/admin/` لوحة الأدمن (Server Actions في `actions.ts`) · `middleware.ts` حماية /admin
 - المادة السابعة في الترم الثاني غير موجودة (اسمها لم يُحدَّد). أضفها من `/admin/subjects`.
+
+## Google Drive (Checkpoint 3)
+- مصدر الـPDF هو Google Drive فقط (لا تخزين ملفات في Supabase). الأدمن يضع رابط ملف Drive عند إضافة عنصر من نوع PDF.
+- الفتح داخل StudyCore عبر `/view/[id]` وقارئ pdf.js (react-pdf)، والملف يمر من `/api/drive/pdf/[id]` بمعرّف عنصر المحتوى.
+- إعداد: أنشئ Google API key (Drive API مفعّل)، وضعه في `GOOGLE_DRIVE_API_KEY` (server-only)، وشارك الملفات "أي شخص لديه الرابط".
+- للمشاريع القائمة: شغّل `supabase/migrations/003_google_drive.sql`. بدون المفتاح يعمل الموقع كما هو وتظهر رسالة "تعذّر فتح الملف" فقط عند فتح PDF.
+- الاختبارات: `npm test`.

@@ -5,6 +5,7 @@ export interface ContentItem {
   name: string;
   type: ContentType;
   url: string;
+  driveFileId?: string; // لعناصر pdf فقط: معرّف الملف في Google Drive
   order: number;
 }
 

@@ -106,6 +106,10 @@ main{min-height:60vh}
 .ar{background:var(--card);border:1.5px solid var(--bd);border-radius:18px;padding:12px 14px;display:grid;gap:8px}
 .arow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .ar summary{cursor:pointer;color:var(--pr);font-weight:700;font-size:14px}.ar details form{margin-top:10px}
+.vidframe{display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:24px;background:var(--nv);margin-top:14px}
+.pdfbox{margin-top:8px}.pdfbox:fullscreen{background:var(--bg);overflow:auto;padding:12px}
+.pdfwrap{overflow:auto}.pdfwrap canvas{display:block;border-radius:8px;box-shadow:0 10px 30px #0F172A2e}
+.bar button:disabled{opacity:.4;cursor:default}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
 .pg .terms>*:nth-child(2){--i:1}
 .pg .terms>*:nth-child(3){--i:2}

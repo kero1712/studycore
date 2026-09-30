@@ -38,11 +38,13 @@ create table if not exists public.content_items (
   name text not null,
   type text not null check (type in ('pdf','video','link')),
   url text not null,
-  drive_url text,               -- جاهز لربط Google Drive لاحقًا (غير مستخدم الآن)
+  drive_url text,               -- رابط Google Drive الموحّد (لعناصر pdf)
+  drive_file_id text,           -- معرّف الملف المستخرج من الرابط
   sort_order int not null default 0,
   is_published boolean not null default true,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  constraint content_pdf_has_drive check (type <> 'pdf' or drive_file_id is not null)
 );
 
 create index if not exists subjects_term_order_idx on public.subjects (term_id, sort_order);

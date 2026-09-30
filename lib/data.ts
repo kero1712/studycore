@@ -14,7 +14,7 @@ async function loadCatalog(): Promise<Term[]> {
   if (!sb) return catalog;
   const { data, error } = await sb
     .from("terms")
-    .select("id,name,sort_order,subjects(id,name,icon,sort_order,sections(id,name,icon,sort_order,content_items(id,name,type,url,sort_order)))");
+    .select("id,name,sort_order,subjects(id,name,icon,sort_order,sections(id,name,icon,sort_order,content_items(id,name,type,url,drive_file_id,sort_order)))");
   if (error) throw new Error(`Supabase: ${error.message}`);
   return mapTerms((data ?? []) as unknown as DbTerm[]);
 }
@@ -44,10 +44,19 @@ export async function getSection(
   return { subject: found.subject, section, items: [...section.contentItems].sort(byOrder) };
 }
 
-export type SearchEntry = { id: string; name: string; type: ContentItem["type"] };
+export async function getContentItem(id: string): Promise<{ item: ContentItem; subject: Subject; section: Section } | undefined> {
+  for (const t of await loadCatalog())
+    for (const subject of t.subjects)
+      for (const section of subject.sections) {
+        const item = section.contentItems.find((c) => c.id === id);
+        if (item) return { item, subject, section };
+      }
+}
+
+export type SearchEntry = { id: string; name: string; type: ContentItem["type"]; url: string };
 
 export async function getSearchIndex(): Promise<SearchEntry[]> {
   return (await loadCatalog()).flatMap((t) =>
-    t.subjects.flatMap((s) => s.sections.flatMap((x) => x.contentItems.map((c) => ({ id: c.id, name: c.name, type: c.type }))))
+    t.subjects.flatMap((s) => s.sections.flatMap((x) => x.contentItems.map((c) => ({ id: c.id, name: c.name, type: c.type, url: c.url }))))
   );
 }

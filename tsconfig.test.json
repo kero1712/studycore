@@ -1,0 +1,2 @@
+{"compilerOptions":{"target":"es2019","module":"commonjs","outDir":".test-out","rootDir":".","skipLibCheck":true,"strict":true,"esModuleInterop":true},
+"files":["data/types.ts","data/section-templates.ts","data/catalog.ts","lib/data-map.ts","lib/data.ts","lib/supabase/public.ts","lib/embed.ts","lib/pdf.ts","lib/ar.ts","lib/integrations/google-drive/parse.ts","lib/integrations/google-drive/config.ts","lib/integrations/google-drive/range.ts"]}

@@ -5,6 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireAdmin } from "@/lib/admin";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { SECTION_TEMPLATES } from "@/data/section-templates";
+import { driveFileUrl, parseDriveUrl } from "@/lib/integrations/google-drive/parse";
 
 const str = (fd: FormData, k: string) => String(fd.get(k) ?? "").trim();
 const ck = (error: { message: string } | null) => { if (error) throw new Error(error.message); };
@@ -59,18 +60,33 @@ export async function toggleSubject(fd: FormData) {
 }
 
 const TYPES = ["pdf", "video", "link"];
+
+// pdf: يجب أن يكون رابط ملف Google Drive، ويُخزَّن موحّدًا مع معرّف الملف. غير ذلك: رابط https عادي.
+function resolveUrl(type: string, url: string) {
+  if (type === "pdf") {
+    const ref = parseDriveUrl(url);
+    if (!ref || ref.kind !== "file") throw new Error("رابط Google Drive غير صالح: يجب أن يكون رابط ملف وليس مجلدًا");
+    const u = driveFileUrl(ref.id);
+    return { url: u, drive_url: u, drive_file_id: ref.id };
+  }
+  if (!/^https:\/\//i.test(url)) throw new Error("الرابط غير صالح (يجب أن يبدأ بـ https)");
+  return { url, drive_url: null, drive_file_id: null };
+}
+
 export async function addContent(fd: FormData) {
   const sb = await requireAdmin();
-  const section_id = Number(str(fd, "section_id")), name = str(fd, "name"), url = str(fd, "url"), type = str(fd, "type");
-  if (!section_id || !name || !url || !TYPES.includes(type)) return;
-  ck((await sb.from("content_items").insert({ section_id, name, url, type, drive_url: str(fd, "drive_url") || null, sort_order: await nextOrder(sb, "content_items", "section_id", section_id) })).error);
+  const section_id = Number(str(fd, "section_id")), name = str(fd, "name"), type = str(fd, "type");
+  if (!section_id || !name || !TYPES.includes(type)) return;
+  const link = resolveUrl(type, str(fd, "url"));
+  ck((await sb.from("content_items").insert({ section_id, name, type, ...link, sort_order: await nextOrder(sb, "content_items", "section_id", section_id) })).error);
   done();
 }
 export async function updateContent(fd: FormData) {
   const sb = await requireAdmin();
   const type = str(fd, "type");
   if (!TYPES.includes(type)) return;
-  ck((await sb.from("content_items").update({ name: str(fd, "name"), url: str(fd, "url"), type, drive_url: str(fd, "drive_url") || null }).eq("id", str(fd, "id"))).error);
+  const link = resolveUrl(type, str(fd, "url"));
+  ck((await sb.from("content_items").update({ name: str(fd, "name"), type, ...link }).eq("id", str(fd, "id"))).error);
   done();
 }
 export async function deleteContent(fd: FormData) {

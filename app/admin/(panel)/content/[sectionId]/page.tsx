@@ -23,8 +23,7 @@ export default async function AdminContent({ params }: { params: { sectionId: st
         <input type="hidden" name="section_id" value={sec.id} />
         <input name="name" placeholder="اسم المحتوى" required />
         <TypeSelect />
-        <input name="url" dir="ltr" placeholder="الرابط" required />
-        <input name="drive_url" dir="ltr" placeholder="رابط Google Drive (اختياري، للمرحلة القادمة)" />
+        <input name="url" dir="ltr" placeholder="رابط Google Drive (للـPDF) أو رابط الفيديو / الرابط" required />
         <button className="btn">إضافة</button>
       </form>
       <div className="list">
@@ -46,7 +45,6 @@ export default async function AdminContent({ params }: { params: { sectionId: st
                 <input name="name" defaultValue={c.name} required />
                 <TypeSelect def={c.type} />
                 <input name="url" dir="ltr" defaultValue={c.url} required />
-                <input name="drive_url" dir="ltr" defaultValue={c.drive_url ?? ""} placeholder="رابط Google Drive (اختياري)" />
                 <button className="btn sm">حفظ</button>
               </form>
             </details>
