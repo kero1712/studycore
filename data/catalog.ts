@@ -1,24 +1,15 @@
 // مصدر البيانات الحالي (ملف ثابت). الواجهة لا تقرأ من هنا مباشرة بل عبر lib/data.ts،
 // فيمكن لاحقًا استبدال هذا الملف بـ Supabase دون تغيير أي صفحة.
-import type { Section, Subject, Term } from "./types";
+import type { Subject, Term } from "./types";
+import { SECTION_TEMPLATES, TONE_BY_ICON } from "./section-templates";
 
-// الأقسام السبعة، ويحصل كل Subject على نسخة منها بمحتوى فارغ.
-const SECTION_TEMPLATES: Omit<Section, "contentItems">[] = [
-  { id: "book", name: "كتاب الجامعة", icon: "book", tone: "g1", order: 1 },
-  { id: "lec", name: "المحاضرات", icon: "lec", tone: "g1", order: 2 },
-  { id: "sec", name: "السكاشن", icon: "sec", tone: "g1", order: 3 },
-  { id: "sum", name: "الملخصات", icon: "sum", tone: "g1", order: 4 },
-  { id: "vid", name: "الفيديوهات", icon: "vid", tone: "g2", order: 5 },
-  { id: "q", name: "الأسئلة", icon: "q", tone: "g3", order: 6 },
-  { id: "ex", name: "الامتحانات", icon: "ex", tone: "g3", order: 7 },
-];
 
 const subject = (id: number, name: string, icon: string, order: number): Subject => ({
   id,
   name,
   icon,
   order,
-  sections: SECTION_TEMPLATES.map((s) => ({ ...s, contentItems: [] })),
+  sections: SECTION_TEMPLATES.map((t) => ({ ...t, tone: TONE_BY_ICON[t.icon], contentItems: [] })),
 });
 
 // لإضافة محتوى: ضع عنصرًا داخل contentItems للقسم المطلوب،
