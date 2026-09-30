@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+
+type CookieToSet = { name: string; value: string; options: CookieOptions };
 
 // يحمي كل /admin ما عدا صفحة الدخول: يتطلب مستخدمًا مسجّلًا موجودًا في admin_users.
 export async function middleware(req: NextRequest) {
@@ -13,7 +15,7 @@ export async function middleware(req: NextRequest) {
   const sb = createServerClient(url, key, {
     cookies: {
       getAll: () => req.cookies.getAll(),
-      setAll: (list) => {
+      setAll: (list: CookieToSet[]) => {
         list.forEach(({ name, value }) => req.cookies.set(name, value));
         res = NextResponse.next({ request: req });
         list.forEach(({ name, value, options }) => res.cookies.set(name, value, options));
