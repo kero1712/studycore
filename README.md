@@ -18,3 +18,14 @@
 - إعداد: أنشئ Google API key (Drive API مفعّل)، وضعه في `GOOGLE_DRIVE_API_KEY` (server-only)، وشارك الملفات "أي شخص لديه الرابط".
 - للمشاريع القائمة: شغّل `supabase/migrations/003_google_drive.sql`. بدون المفتاح يعمل الموقع كما هو وتظهر رسالة "تعذّر فتح الملف" فقط عند فتح PDF.
 - الاختبارات: `npm test`.
+
+## Checkpoint 5 — تشغيل حقيقي مع Supabase (تنفّذه أنت)
+1. Supabase → SQL Editor: الصق `supabase/setup.sql` (schema + seed) ثم Run. (لمشروع قديم فيه schema سابق: شغّل أيضًا `supabase/migrations/003_google_drive.sql`.)
+2. Authentication → Users → Add user (بريد + كلمة مرور) للأدمن الوحيد. وعطّل التسجيل العام: Authentication → Sign In / Providers → "Allow new users to sign up" = off.
+3. SQL Editor: `insert into public.admin_users (user_id) select id from auth.users where email = 'ADMIN_EMAIL';`
+4. `.env.local` (لا يُرفع إلى git):
+   - `NEXT_PUBLIC_SUPABASE_URL` و `NEXT_PUBLIC_SUPABASE_ANON_KEY` من Project Settings → API (anon/public فقط، ولا تستخدم service_role).
+   - `GOOGLE_DRIVE_API_KEY` (server-only) لعرض الـPDF.
+5. `npm run build && npm start` (أو `npm run dev`) ثم من طرفية أخرى:
+   `ADMIN_EMAIL=... ADMIN_PASSWORD=... BASE_URL=http://localhost:3000 TEST_DRIVE_FILE_URL=<رابط PDF مشارك> npm run verify:e2e`
+   (اختياري: `TEST_USER_EMAIL` / `TEST_USER_PASSWORD` لمستخدم عادي غير أدمن لاختبار منعه من الكتابة). يتطلب Node 20.6+.
