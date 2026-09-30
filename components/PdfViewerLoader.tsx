@@ -1,9 +1,20 @@
 "use client";
-import dynamic from "next/dynamic";
 
-// pdf.js يعمل في المتصفح فقط
-const PdfViewer = dynamic(() => import("./PdfViewer"), { ssr: false, loading: () => <div className="empty">جاري التحميل...</div> });
+import PdfViewer from "./PdfViewer";
 
-export default function PdfViewerLoader({ src }: { src: string }) {
-  return <PdfViewer src={src} />;
+type PdfViewerLoaderProps = {
+  src: string;
+  driveUrl?: string;
+};
+
+export default function PdfViewerLoader({
+  src,
+  driveUrl,
+}: PdfViewerLoaderProps) {
+  return (
+    <PdfViewer
+      src={src}
+      driveUrl={driveUrl}
+    />
+  );
 }
