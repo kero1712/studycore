@@ -3,7 +3,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { ar } from "@/lib/ar";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/build/pdf.worker.min.mjs", import.meta.url).toString();
+// الـworker يُحمَّل من CDN بنفس إصدار pdfjs-dist بدل تمريره على webpack/SWC (يتجنب فشل parse لملف .mjs الجاهز)
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 export default function PdfViewer({ src }: { src: string }) {
   const box = useRef<HTMLDivElement>(null);
